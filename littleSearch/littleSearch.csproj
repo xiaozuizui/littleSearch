@@ -99,6 +99,8 @@
     <Content Include="Dict\Wildcard.txt" />
     <Content Include="MainWindow.aspx" />
     <Content Include="PanGu\PanGu.xml" />
+    <None Include="Properties\PublishProfiles\CustomProfile.pubxml" />
+    <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <None Include="Scripts\jquery-1.4.1-vsdoc.js" />
     <Content Include="Scripts\jquery-1.4.1.js" />
     <Content Include="Scripts\jquery-1.4.1.min.js" />

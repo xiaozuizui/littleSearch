@@ -14,7 +14,7 @@
         function doclick(action) {
             $("#action").val(action);
             $("#form1").submit();
-            console.log(1000);
+           
         }
     </script>
 </head>
@@ -32,6 +32,7 @@
            
             搜索内容：<input type="text" name="content" class="input_text" value="<%=txtContent %>" />
             <input type="submit" value="搜索"  onclick="doclick('SearchIndex')"/>
+            <input  onclick =" "
        </div>
         <div>
         <table class="table_list" >

@@ -22,7 +22,7 @@ namespace littleSearch
     {
 
         private string strIndexPath = string.Empty;
-        protected string txtTitle = string.Empty;
+        //protected string txtTitle = string.Empty;
         protected string txtContent = string.Empty;
         protected long lSearchTime = 0;
         protected Lucene.Net.Store.Directory Lu_IndexDic {
@@ -123,6 +123,7 @@ namespace littleSearch
                 parseContent.DefaultOperator = QueryParser.Operator.AND;
                 bQuery.Add(queryC, Occur.MUST);
                 dic.Add("title", keyword);
+                txtContent = keyword;
                 // txtTitle = Request.Form["title"].ToString();
             }
             //if (Request.Form["content"] != null && Request.Form["content"].ToString() != "")
@@ -299,7 +300,7 @@ namespace littleSearch
         protected void Page_Load(object sender, EventArgs e)
         {
 
-            PanGu.Segment.Init(PanGuXmlPath);
+            //PanGu.Segment.Init(PanGuXmlPath);
             switch (Action)
             {
                 //  case "CreateIndex": CreateIndex(Cover); break;
