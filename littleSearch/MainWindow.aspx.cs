@@ -30,6 +30,8 @@ namespace littleSearch
             { return Lucene.Net.Store.FSDirectory.Open(new DirectoryInfo(IndexDic)); }
                  }
 
+        protected int time = 1;
+        protected string State = string.Empty;
         protected IList<Record> list = new List<Record>();
         protected string txtPageFoot = string.Empty;
         //protected IndexManager indexManager;
@@ -104,48 +106,55 @@ namespace littleSearch
 
         private void SearchIndex()
         {
-            
+            //State = "entery search";
             Dictionary<string, string> dic = new Dictionary<string, string>();
             BooleanQuery bQuery = new BooleanQuery();
+           
             string keyword = Request.Form["content"].ToString();
             string search = GetKeyWordsSplitBySpace(keyword);
+
+            //Query bQuery = MultiFieldQueryParser.Parse(Lucene.Net.Util.Version.LUCENE_30, new string[] { keyword,keyword }, new string[] { "Title", "Content" }, PanGuAnalyzer);
+
             if (search != null && search != "")
             {
                 //title = GetKeyWordsSplitBySpace(Request.Form["title"].ToString());
-                //QueryParser parseTitle = new QueryParser(Lucene.Net.Util.Version.LUCENE_30, "Title", pgAnalyzer);
-                //parseTitle.DefaultOperator = QueryParser.Operator.AND;
-                //Query queryT = parseTitle.Parse(GetKeyWordsSplitBySpace(st));
-                //bQuery.Add(queryT, Occur.MUST);
+                //QueryParser parseTitle = new QueryParser(Lucene.Net.Util.Version.LUCENE_30, "Title", PanGuAnalyzer);
+               //parseTitle.DefaultOperator = QueryParser.Operator.OR;
+              // Query queryT = parseTitle.Parse(search);
 
-            
-                QueryParser parseContent = new QueryParser(Lucene.Net.Util.Version.LUCENE_30, "Content", PanGuAnalyzer);
-                Query queryC = parseContent.Parse(search);
-                parseContent.DefaultOperator = QueryParser.Operator.AND;
+                QueryParser parserContent = new QueryParser(Lucene.Net.Util.Version.LUCENE_30, "Content", PanGuAnalyzer);
+                parserContent.DefaultOperator = QueryParser.Operator.OR;
+                Query queryC = parserContent.Parse(search);
+
+
+                //bQuery.Add(queryT, Occur.MUST);
                 bQuery.Add(queryC, Occur.MUST);
+
+               // TermQuery t1 = new TermQuery(new Lucene.Net.Index.Term("Content", keyword));
+               // TermQuery t2 = new TermQuery(new Lucene.Net.Index.Term("Title", keyword));
+              //  bQuery.Add(t1, Occur.MUST);
+               // bQuery.Add(t2, Occur.MUST);
+
+                
+                //bQuery.Add(queryC, Occur.MUST);
                 dic.Add("title", keyword);
                 txtContent = keyword;
                 // txtTitle = Request.Form["title"].ToString();
             }
-            //if (Request.Form["content"] != null && Request.Form["content"].ToString() != "")
-            //{
-            //    content = GetKeyWordsSplitBySpace(Request.Form["content"].ToString());
-            //    QueryParser parse = new QueryParser("Content", PanGuAnalyzer);
-            //    Query query = parse.Parse(content);
-            //    parse.SetDefaultOperator(QueryParser.Operator.AND);
-            //    bQuery.Add(query, BooleanClause.Occur.MUST);
-            //    dic.Add("content", Request.Form["content"].ToString());
-            //    txtContent = Request.Form["content"].ToString();
-            //}
-            if (bQuery != null && bQuery.GetClauses().Length > 0)
+          
+            if (bQuery != null )
             {
 
                 //Lucene.Net.Store.Directory ad = Lucene.Net.Store.FSDirectory.Open(new DirectoryInfo(IndexDic));
                 IndexSearcher searcher = new IndexSearcher(Lu_IndexDic, true);
                 Stopwatch stopwatch = Stopwatch.StartNew();
 
-                Sort sort = new Sort(new SortField("Title", SortField.DOC, true));
-                TopDocs docs = searcher.Search(bQuery, (Filter)null, PageSize * PageIndex, sort);
+
+                //Sort sort = new Sort(new SortField("Title", SortField.DOC, true));
+                
+                TopDocs docs = searcher.Search(bQuery, (Filter)null, PageSize * PageIndex);
                 stopwatch.Stop();
+                //State = "search num " + docs.TotalHits.ToString();
                 if (docs != null && docs.TotalHits > 0)
                 {
                     lSearchTime = stopwatch.ElapsedMilliseconds;
@@ -164,7 +173,7 @@ namespace littleSearch
                                 Uri = doc.Get("Uri").ToString()
                             };
                             // re += model.Title + "    " + model.Uri;
-                            Console.WriteLine(model.Title + "    " + model.Uri);
+                            //Console.WriteLine(model.Title + "    " + model.Uri);
                             //re.Add(SetHighlighter(keyword, model));
                             list.Add(SetHighlighter(keyword, model));
                            // list.Add(model);
@@ -179,15 +188,31 @@ namespace littleSearch
             SimpleHTMLFormatter simpleHTMLFormatter = new PanGu.HighLight.SimpleHTMLFormatter("<font color=\"red\">", "</font>");
             Highlighter highlighter = new PanGu.HighLight.Highlighter(simpleHTMLFormatter, new Segment());
             highlighter.FragmentSize = 50;
-            string strTitle = model.Title;
-            string strContent = model.Content;
+            string strTitle;
+            string strContent;
 
 
           
-                //model.Title = highlighter.GetBestFragment(Keywords, model.Title);
+           strTitle = highlighter.GetBestFragment(Keywords, model.Title);
+            if (strTitle != "")
+                model.Title = strTitle;
            
-                model.Content = highlighter.GetBestFragment(Keywords, model.Content);
+          strContent = highlighter.GetBestFragment(Keywords, model.Content);
+
+            if (strContent != "")
+                model.Content = strContent;
+            else if(model.Content!="")
+            {
+                Random r = new Random();
+                int start = r.Next(0, model.Content.Length - 1);
+                int len = model.Content.Length-1 - start;
+                if (len > 20)
+                    model.Content = model.Content.Substring(start, 20);
+                else
+                    model.Content = model.Content.Substring(start);
+            }
             
+                
             return model;
         }
 
@@ -299,12 +324,18 @@ namespace littleSearch
 
         protected void Page_Load(object sender, EventArgs e)
         {
-
+            State = "page load" + time.ToString() ;
+            //time += 1;
             //PanGu.Segment.Init(PanGuXmlPath);
+            State = Action;
             switch (Action)
             {
+                 
                 //  case "CreateIndex": CreateIndex(Cover); break;
-                case "SearchIndex": SearchIndex(); break;
+                case "SearchIndex":
+                    {
+                       
+                        SearchIndex(); break; }
             }
         }
 

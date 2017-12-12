@@ -10,13 +10,14 @@
     <script src="Scripts/SC.js" type="text/javascript"></script>
     <link href="Style/index.css" rel="stylesheet" type="text/css" />
    
-    <script type="text/javascript">
+    <script  type="text/javascript"  >
         function doclick(action) {
             $("#action").val(action);
             $("#form1").submit();
            
         }
     </script>
+   
 </head>
 
 
