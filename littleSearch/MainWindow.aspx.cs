@@ -119,9 +119,10 @@ namespace littleSearch
             {
                 //title = GetKeyWordsSplitBySpace(Request.Form["title"].ToString());
                 //QueryParser parseTitle = new QueryParser(Lucene.Net.Util.Version.LUCENE_30, "Title", PanGuAnalyzer);
-               //parseTitle.DefaultOperator = QueryParser.Operator.OR;
-              // Query queryT = parseTitle.Parse(search);
+                //parseTitle.DefaultOperator = QueryParser.Operator.OR;
+                // Query queryT = parseTitle.Parse(search);
 
+                //MultiFieldQueryParser multiFieldQueryParser = new MultiFieldQueryParser(Lucene.Net.Util.Version.LUCENE_30, new string[2] { "Title", "Content" }, PanGuAnalyzer);
                 QueryParser parserContent = new QueryParser(Lucene.Net.Util.Version.LUCENE_30, "Content", PanGuAnalyzer);
                 parserContent.DefaultOperator = QueryParser.Operator.OR;
                 Query queryC = parserContent.Parse(search);

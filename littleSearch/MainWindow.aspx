@@ -33,7 +33,7 @@
            
             搜索内容：<input type="text" name="content" class="input_text" value="<%=txtContent %>" />
             <input type="submit" value="搜索"  onclick="doclick('SearchIndex')"/>
-            <input  onclick =" "
+            
        </div>
         <div>
         <table class="table_list" >
